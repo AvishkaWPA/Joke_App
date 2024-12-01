@@ -42,24 +42,13 @@ class _JokeListPageState extends State<JokeListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Joke App',
-          style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.white
-          ),
-        ),
-        backgroundColor: Colors.blue,
-      ),
       body: Container(
         decoration: BoxDecoration(
             gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Colors.deepPurple.shade100, Colors.white],
-            )
-        ),
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Colors.deepPurple.shade100, Colors.white],
+        )),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -71,13 +60,12 @@ class _JokeListPageState extends State<JokeListPage> {
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
                     color: Colors.blue,
-                    shadows: [Shadow(color: Colors.white, blurRadius: 2)]
-                ),
+                    shadows: [Shadow(color: Colors.white, blurRadius: 2)]),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
               const Text(
-                'Click the button to fetch random jokes!',
+                'Do you wanna see jokes.Click button!',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w400,
@@ -88,13 +76,15 @@ class _JokeListPageState extends State<JokeListPage> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                  onPressed: () {_fetchJokes();},
+                  onPressed: () {
+                    _fetchJokes();
+                  },
                   style: const ButtonStyle(
-                      backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue),
+                      backgroundColor:
+                          WidgetStatePropertyAll<Color>(Colors.blue),
                       minimumSize: WidgetStatePropertyAll<Size>(Size(0, 50)),
                       shape: WidgetStatePropertyAll(LinearBorder.none),
-                      enableFeedback: true
-                  ),
+                      enableFeedback: true),
                   child: const Text(
                     'Fetch Jokes',
                     style: TextStyle(
@@ -105,8 +95,8 @@ class _JokeListPageState extends State<JokeListPage> {
                   )),
               const SizedBox(height: 24),
               Expanded(
-                child: _isLoading ?
-                const Center(child: CircularProgressIndicator())
+                child: _isLoading
+                    ? const Center(child: CircularProgressIndicator())
                     : _buildJokeList(),
               )
             ],
@@ -116,30 +106,40 @@ class _JokeListPageState extends State<JokeListPage> {
     );
   }
 
-
+  /// Builds a list of jokes to display.
   Widget _buildJokeList() {
     if (_jokesRaw.isEmpty) {
       return const Center(
         child: Text(
           'No jokes fetched yet.',
-          style: TextStyle(fontSize: 18, color: Colors.blue),
+          style: TextStyle(fontSize: 18, color: Colors.deepPurple),
         ),
       );
     }
+
     return ListView.builder(
       itemCount: _jokesRaw.length,
       itemBuilder: (context, index) {
-        final jokeJson = _jokesRaw[index];
+        final joke = _jokesRaw[index];
+
+        // Render joke based on its type.
+        final isTwoPart = joke['type'] == 'twopart';
+        final jokeText = isTwoPart
+            ? '${joke['setup']}\n\n${joke['delivery']}' // Two-part joke
+            : joke['joke']; // Single-line joke
+
         return Card(
           margin: const EdgeInsets.only(bottom: 16),
           elevation: 4,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                jsonEncode(jokeJson),
-                style: const TextStyle(fontSize: 14),
-              )
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              jokeText,
+              style: const TextStyle(fontSize: 16, color: Colors.black87),
+            ),
           ),
         );
       },
